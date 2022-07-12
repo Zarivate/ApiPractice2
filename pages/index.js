@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Flex, Box, Text, Button } from "@chakra-ui/react";
 
+import { baseUrl, fetchAPI } from "../utils/fetchApi";
+
 // Banner component is the component above our Home component
 const Banner = ({
   purpose,
@@ -37,7 +39,9 @@ const Banner = ({
   </Flex>
 );
 
-export default function Home() {
+export default function Home({ propertiesForRent, propertiesForSale }) {
+  console.log(propertiesForRent, propertiesForSale);
+
   return (
     <Box>
       <Banner
@@ -50,6 +54,9 @@ export default function Home() {
         linkName="/search?purpose=for-rent"
         imageURL="https://bayut-production.s3.eu-central-1.amazonaws.com/image/145426814/33973352624c48628e41f2ec460faba4"
       />
+      <Flex flexWrap="wrap">
+        {/* Here the properties are fetched and mapped over */}
+      </Flex>
       <Banner
         purpose="Buy A HOME"
         title="Find, Buy & Own Your"
@@ -60,6 +67,27 @@ export default function Home() {
         linkName="/search?purpose=for-sale"
         imageURL="https://bayut-production.s3.eu-central-1.amazonaws.com/image/110993385/6a070e8e1bae4f7d8c1429bc303d2008"
       />
+      {/* Properties are fetched again, this time ones to buy, and mapped over */}
     </Box>
   );
+}
+
+// This is something Next.js lets you do, create a component at the bottom that will be used to fetch our calls to the API
+export async function getStaticProps() {
+  const propertyForSale = await fetchAPI(
+    `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`
+  );
+
+  const propertyForRent = await fetchAPI(
+    `${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`
+  );
+
+  // This is how this is passed to the component back at the top
+  return {
+    props: {
+      // These are automatically added to the props of the top component by Next.js
+      propertiesForSale: propertyForSale?.hits,
+      propertiesForRent: propertyForRent?.hits,
+    },
+  };
 }
