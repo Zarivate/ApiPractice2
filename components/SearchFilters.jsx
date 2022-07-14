@@ -28,7 +28,12 @@ const SearchFilters = () => {
 
     // Each one of these values is looped over
     values.forEach((item) => {
-      query[item.name] = item.value;
+      // This is to fix bug where after selecting more than 1 filter option, the previous one is cleared.
+      // If there is a specific item that the user wants to add to their chosen filters and if there is a specific value in what is trying to be searched/filtered
+      if (item.value && filterValues?.[item.name]) {
+        // Only add the ones to the query if there is a value for it
+        query[item.name] = item.value;
+      }
     });
 
     router.push({ pathname: path, query });
