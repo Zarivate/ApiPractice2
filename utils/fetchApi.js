@@ -10,6 +10,5 @@ export const fetchAPI = async (url) => {
     },
   });
 
-  // This is so the data that's returned is actually used for now
   return data;
 };
